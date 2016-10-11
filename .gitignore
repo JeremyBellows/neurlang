@@ -11,3 +11,4 @@ auto-save-list
 tramp
 .\#*
 /.depsolver.plt
+_build

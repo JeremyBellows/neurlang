@@ -1,4 +1,4 @@
-Code.require_file "../test_helper.exs", __FILE__
+Code.require_file "../test_helper.exs", __ENV__.file
 
 defmodule NeuralNetworkTest do
 
@@ -7,12 +7,20 @@ defmodule NeuralNetworkTest do
 
 	import Connector, only: [connect: 1]
 
+	def identity do
+    fn x -> x end
+	end
+
+	def sigmoid do
+		fn x -> MathUtil.sigmoid(x) end
+	end
+
 	test "neural net with one neuron and identify activation function.  feed data through it and check result" do
 
 		# Create nodes
-		neuron = Neuron.start_node(bias: 10, activation_function: function(identity/1))
-		sensor = Sensor.start_node(sync_function: fake_sensor_data([[1, 1, 1, 1, 1]]))
-		actuator = Actuator.start_node([])
+		neuron = Neuron.start_node(%Neuron{bias: 10, activation_function: identity})
+		sensor = Sensor.start_node(%Sensor{sync_function: fake_sensor_data([[1, 1, 1, 1, 1]])})
+		actuator = Actuator.start_node(%Actuator{})
 
 		# Wire up network
 		connect(from: sensor, to: neuron, weights: [20, 20, 20, 20, 20])
@@ -32,13 +40,13 @@ defmodule NeuralNetworkTest do
 	test "neural net which can solve the XNOR problem.  no learning involved (class.coursera.org/ml/lecture/48)" do
 
 		# Create nodes
-		sensor_x1 = Sensor.start_node(sync_function: fake_sensor_data( [[0], [0], [1], [1]]))
+		sensor_x1 = Sensor.start_node(%Sensor{sync_function: fake_sensor_data( [[0], [0], [1], [1]])})
 
-		sensor_x2 = Sensor.start_node(sync_function: fake_sensor_data( [[0], [1], [0], [1]]))
-		neuron_a2_1 = Neuron.start_node(bias: -30, activation_function: function(sigmoid/1))
-		neuron_a2_2 = Neuron.start_node(bias: 10, activation_function: function(sigmoid/1))
-		neuron_a3_1 = Neuron.start_node(bias: -10, activation_function: function(sigmoid/1))
-		actuator = Actuator.start_node([])
+		sensor_x2 = Sensor.start_node(%Sensor{sync_function: fake_sensor_data( [[0], [1], [0], [1]])})
+		neuron_a2_1 = Neuron.start_node(%Neuron{bias: -30, activation_function: sigmoid})
+		neuron_a2_2 = Neuron.start_node(%Neuron{bias: 10, activation_function: sigmoid})
+		neuron_a3_1 = Neuron.start_node(%Neuron{bias: -10, activation_function: sigmoid})
+		actuator = Actuator.start_node(%Actuator{})
 
 		# Wire up network
 		connect(from: sensor_x1, to: neuron_a2_1, weights: [20])
@@ -47,7 +55,7 @@ defmodule NeuralNetworkTest do
 		connect(from: sensor_x2, to: neuron_a2_2, weights: [-20])
 		connect(from: neuron_a2_1, to: neuron_a3_1, weights: [20])
 		connect(from: neuron_a2_2, to: neuron_a3_1, weights: [20])
-		connect(from: neuron_a3_1, to: actuator) 
+		connect(from: neuron_a3_1, to: actuator)
 
 		# tap into actuator for testing purposes
 		NodeProcess.add_outbound_connection(actuator, self())
@@ -76,7 +84,7 @@ defmodule NeuralNetworkTest do
 
 	def actuator_next_output() do
 		receive do
-			{_pid, :forward, [output]} -> 
+			{_pid, :forward, [output]} ->
 				output
 			any ->
 				assert false, "Got unexpected message: #{inspect(any)}"
@@ -91,14 +99,6 @@ defmodule NeuralNetworkTest do
 		NodeProcess.sync(sensor_x2)
 	end
 
-	def identity(x) do
-		x
-	end
 
-	def sigmoid(x) do
-		MathUtil.sigmoid(x)
-	end
 
 end
-
-

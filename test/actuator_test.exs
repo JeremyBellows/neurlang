@@ -1,4 +1,4 @@
-Code.require_file "../test_helper.exs", __FILE__
+Code.require_file "../test_helper.exs", __ENV__.file
 
 defmodule ActuatorTest do
   use ExUnit.Case
@@ -9,14 +9,12 @@ defmodule ActuatorTest do
 	alias Neurlang.Accumulator, as: Accumulator
 
   test "barrier satisfied" do
-		actuator = Actuator.new(pid: :actuatorpid)
+		actuator = %Actuator{}
 		actuator = ConnectedNode.add_inbound_connection( actuator, :neuron_pid )
-		barrier = HashDict.new()
+		barrier = Map.new()
 		barrier = Dict.put( barrier, :neuron_pid, :fake_input)
-		actuator = actuator.barrier( barrier )
+		actuator = %{actuator | barrier: barrier}
 		assert Accumulator.is_barrier_satisfied?(actuator) == true
 	end
 
-
-	
 end

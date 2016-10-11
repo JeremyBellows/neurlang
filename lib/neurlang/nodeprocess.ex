@@ -2,15 +2,15 @@
 defmodule Neurlang.NodeProcess do
 
 	@moduledoc """
-  This provides the _actor_ functionality of neural elements in neurlang.  
+  This provides the _actor_ functionality of neural elements in neurlang.
 
-  Each type of element (sensor, neuron, actuator) can be _wrapped_ by this nodeprocess, 
-  which allows it to communicate with other nodes (sensors, neurons, actuators) using 
+  Each type of element (sensor, neuron, actuator) can be _wrapped_ by this nodeprocess,
+  which allows it to communicate with other nodes (sensors, neurons, actuators) using
   async message passing.
 
 	The gen_server state is represented by the appropriate node record (sensor, neuron, actuator).
   """
-	use GenServer.Behaviour
+	use GenServer
 	use Neurlang
   alias Neurlang, as: N
 
@@ -23,7 +23,7 @@ defmodule Neurlang.NodeProcess do
   """
 	@spec start_link(N.neuro_node) :: {:ok | :error, pid}
 	def start_link(node) do
-		:gen_server.start_link(__MODULE__, node, [])	
+		:gen_server.start_link(__MODULE__, node, [])
 	end
 
 	@doc """
@@ -52,7 +52,7 @@ defmodule Neurlang.NodeProcess do
 	end
 
 	@doc """
-  Cause this sensor to sense the environment and send outputs.  
+  Cause this sensor to sense the environment and send outputs.
   """
   @spec sync(pid) :: N.neurlang_node
 	def sync(node_pid) do
@@ -82,8 +82,8 @@ defmodule Neurlang.NodeProcess do
 		end
 		node
 	end
-	
-	## OTP 
+
+	## OTP
 
 	@doc false
   @spec init(N.neurlang_node) :: {:ok, N.neurlang_node}
