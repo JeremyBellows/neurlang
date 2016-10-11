@@ -2,14 +2,14 @@
 
 
 A library for constructing [Neural Networks](https://en.wikipedia.org/wiki/Artificial_neural_network)
-in [Elixir](http://elixir-lang.org/) or [Erlang](http://www.erlang.org/).  
+in [Elixir](http://elixir-lang.org/) or [Erlang](http://www.erlang.org/).
 
-Neurlang is essentially a port of the [DXNN2](https://github.com/CorticalComputer/DXNN2) core neural network elements.  
+Neurlang is essentially a port of the [DXNN2](https://github.com/CorticalComputer/DXNN2) core neural network elements.
 
 However, unlike [DXNN2](https://github.com/CorticalComputer/DXNN2), Neurlang:
 
 * Is written in Elixir
-* Is easily usable in non-TWEANN's (Topology WEight Adapting Neural Networks).  
+* Is easily usable in non-TWEANN's (Topology WEight Adapting Neural Networks).
 
 The goal is that any neural network should be able to be built using the components available in Neurlang.
 If you want to build a neural network, and Neurlang is missing something you need,
@@ -20,9 +20,9 @@ ___Status: Neurlang is still in the process of being built, and is therefore is 
 # Using Neurlang
 
     # Create nodes
-    neuron = Neuron.start_node(bias: 10, activation_function: function(identity/1))
-    sensor = Sensor.start_node(sync_function: fake_sensor_data([[1, 1, 1, 1, 1]]))
-    actuator = Actuator.start_node([])
+    neuron = Neuron.start_node(%Neuron{bias: 10, activation_function: function(identity/1)})
+    sensor = Sensor.start_node(%Neuron{sync_function: fake_sensor_data([[1, 1, 1, 1, 1]])})
+    actuator = Actuator.start_node(%Actuator{})
 
     # Wire up network
     connect(from: sensor, to: neuron, weights: [20, 20, 20, 20, 20])
@@ -43,7 +43,7 @@ ___Status: Neurlang is still in the process of being built, and is therefore is 
 Neurlang provides three types of neural elements, all of which are <code>gen_server</code> processes
 which can link up with each other and exchange messages.
 
-* Sensor 
+* Sensor
 
 * Neuron
 
@@ -52,7 +52,7 @@ which can link up with each other and exchange messages.
 # Related Work
 
 [DXNN2](https://github.com/CorticalComputer/DXNN2) - Pure Erlang TWEANN (Topology WEight Adapting Neural Network).
-Neurlang is essentially a port of the DXNN2 core neural network elements.  
+Neurlang is essentially a port of the DXNN2 core neural network elements.
 
 # Related Publications
 
